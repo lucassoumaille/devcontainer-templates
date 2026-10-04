@@ -1,0 +1,34 @@
+{
+    "id": "python",
+    "version": "6.0.0",
+    "name": "Python 3",
+    "description": "Develop Python 3 applications.",
+    "documentationURL": "https://github.com/devcontainers/templates/tree/main/src/python",
+    "publisher": "lucassoumaille",
+    "licenseURL": "https://github.com/devcontainers/templates/blob/main/LICENSE",
+    "options": {
+        "imageVariant": {
+            "type": "string",
+            "description": "Python version (use -trixie, or -bookworm variants on local arm64/Apple Silicon):",
+            "proposals": [
+                "3-trixie",
+                "3.14-trixie",
+                "3.13-trixie",
+                "3.12-trixie",
+                "3.11-trixie",
+                "3.10-trixie",
+                "3-bookworm",
+                "3.14-bookworm",
+                "3.13-bookworm",
+                "3.12-bookworm",
+                "3.11-bookworm",
+                "3.10-bookworm"
+            ],
+            "default": "3.14-trixie"
+        }
+    },
+    "platforms": ["Python"],
+    "optionalPaths": [
+        ".github/*"
+    ]
+}

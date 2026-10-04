@@ -1,0 +1,39 @@
+{
+    "name": "Python standard",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/node:2": {
+            "version": "22"
+        },
+        "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+    },
+    "runArgs": [
+        "--cap-drop=ALL"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "charliermarsh.ruff",
+                "anthropic.claude-code"
+            ]
+        }
+    },
+    "postCreateCommand": "pip install -e '.[dev]' && npm install -g opencode-ai",
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+        "source=/mnt/wslg,target=/mnt/wslg,type=bind",
+        "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+    ],
+    "containerEnv": {
+        "DISPLAY": ":0",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+        "PULSE_SERVER": "/mnt/wslg/PulseServer",
+        "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+    }
+}
