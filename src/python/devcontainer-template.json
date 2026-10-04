@@ -24,7 +24,7 @@
                 "3.11-bookworm",
                 "3.10-bookworm"
             ],
-            "default": "3.14-trixie"
+            "default": "3.14-trixie" 
         }
     },
     "platforms": ["Python"],
