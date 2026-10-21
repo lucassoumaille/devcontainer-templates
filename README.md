@@ -1,122 +1,206 @@
-# Dev Container Templates: Self Authoring Guide
+# Dev Container Templates
 
-> This repo provides a starting point and example for creating your own custom [Dev Container Templates](https://containers.dev/implementors/templates), hosted for free on GitHub Container Registry.  The example in this repository follows the [Dev Container Template distribution specification](https://containers.dev/implementors/templates-distribution/).  
->
-> To provide feedback on the distribution spec, please leave a comment [on spec issue #71](https://github.com/devcontainers/spec/issues/71).
+Reusable development environments for consistent, AI-assisted software development.
 
-## Repo and Template Structure
+This repository provides standardized [Dev Container Templates](https://containers.dev/implementors/templates/) for language-specific development environments.
 
-This repository contains a _collection_ of two Templates - `hello` and `color`. These Templates serve as simple template implementations which helps containerize the project. Similar to the [`devcontainers/templates`](https://github.com/devcontainers/templates) repo, this repository has a `src` folder.  Each Template has its own sub-folder, containing at least a `devcontainer-template.json` and `.devcontainer/devcontainer.json`. 
+The goal is to maintain one reliable development setup per language while sharing common tools, AI coding assistants, and configuration across projects.
 
+## Available Templates
+
+| Template | Description | Status |
+|---|---|---|
+| `python` | Python development with Claude Code, Node.js, and OpenCode | Initial template |
+
+Additional language templates, such as Node.js, Go, and Rust, can be added under `src/`.
+
+## Architecture
+
+This repository contains development environment templates, not production application images.
+
+Shared tools are maintained separately in the `devcontainer-features` repository.
+
+```text
+GitHub
+├── devcontainer-templates
+│   └── src/
+│       ├── python/
+│       ├── node/       # Planned
+│       ├── go/         # Planned
+│       └── rust/       # Planned
+│
+└── devcontainer-features
+    └── src/
+        └── ai-tools/
+            ├── Claude Code
+            └── VS Code extension
 ```
-├── src
-│   ├── color
-│   │   ├── devcontainer-template.json
-│   │   └──| .devcontainer
-│   │      └── devcontainer.json
-│   ├── hello
-│   │   ├── devcontainer-template.json
-│   │   └──| .devcontainer
-│   │      ├── devcontainer.json
-│   │      └── Dockerfile
-|   ├── ...
-│   │   ├── devcontainer-template.json
-│   │   └──| .devcontainer
-│   │      └── devcontainer.json
-├── test
-│   ├── color
-│   │   └── test.sh
-│   ├── hello
-│   │   └── test.sh
-│   └──test-utils
-│      └── test-utils.sh
-...
-```
 
-### Options
+### Responsibilities
 
-All available options for a Template should be declared in the `devcontainer-template.json`. The syntax for the `options` property can be found in the [devcontainer Template json properties reference](https://containers.dev/implementors/templates#devcontainer-templatejson-properties).
+- **Templates:** language runtimes, VS Code extensions, project-specific settings, mounts, and environment variables.
+- **Features:** reusable tools installed inside development containers.
+- **Project repositories:** application code, dependencies, tests, and project-specific agent instructions.
+- **Production images:** built and published separately for deployment.
 
-For example, the `color` Template provides three possible options (`red`, `gold`, `green`), where the default value is set to "red".
+## Python Standard Template
 
-```jsonc
+The Python template currently provides:
+
+- Python development using the repository's Dockerfile.
+- Node.js 22 for JavaScript-based development tools.
+- Claude Code through the shared `ai-tools` Feature.
+- The Claude Code VS Code extension.
+- Python and Ruff VS Code extensions.
+- OpenCode CLI installed through npm.
+- A persistent Docker volume for Claude configuration.
+- Optional WSLg integration for Linux graphical applications.
+
+### Shared AI tools
+
+The template uses the published Feature:
+
+```json
 {
-    // ...
-    "options": {
-        "favorite": {
-            "type": "string",
-            "description": "Choose your favorite color.",
-            "proposals": [
-                "red",
-                "gold",
-                "green"
-            ],
-            "default": "red"
-        }
-    }
+  "ghcr.io/TON_USER/devcontainer-features/ai-tools:1": {}
 }
 ```
 
-An [implementing tool](https://containers.dev/supporting#tools) will use the `options` property from [the documented Dev Container Template properties](https://containers.dev/implementors/templates#devcontainer-templatejson-properties) for customizing the Template. See [option resolution example](https://containers.dev/implementors/templates#option-resolution-example) for details.
+The Feature is responsible for installing Claude Code and providing its VS Code extension.
 
-## Distributing Templates
+Node.js remains a separate Feature in the Python template because OpenCode is installed using npm.
 
-**Note**: *Allow GitHub Actions to create and approve pull requests* should be enabled in the repository's `Settings > Actions > General > Workflow permissions` for auto generation of `src/<template>/README.md` per Template (which merges any existing `src/<template>/NOTES.md`).
+### Claude configuration persistence
 
-### Versioning
+The template configures a named Docker volume:
 
-Templates are individually versioned by the `version` attribute in a Template's `devcontainer-template.json`. Templates are versioned according to the semver specification. More details can be found in [the Dev Container Template specification](https://containers.dev/implementors/templates-distribution/#versioning).
-
-### Publishing
-
-> NOTE: The Distribution spec can be [found here](https://containers.dev/implementors/templates-distribution/).  
->
-> While any registry [implementing the OCI Distribution spec](https://github.com/opencontainers/distribution-spec) can be used, this template will leverage GHCR (GitHub Container Registry) as the backing registry.
-
-Templates are source files packaged together that encode configuration for a complete development environment.
-
-This repo contains a GitHub Action [workflow](.github/workflows/release.yaml) that will publish each template to GHCR.  By default, each Template will be prefixed with the `<owner>/<repo>` namespace.  For example, the two Templates in this repository can be referenced by an [implementing tool](https://containers.dev/supporting#tools) with:
-
-```
-ghcr.io/devcontainers/template-starter/color:latest
-ghcr.io/devcontainers/template-starter/hello:latest
+```json
+{
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+  }
+}
 ```
 
-The provided GitHub Action will also publish a third "metadata" package with just the namespace, eg: `ghcr.io/devcontainers/template-starter`. This contains information useful for tools aiding in Template discovery.
+This keeps Claude configuration outside the container's writable filesystem.
 
-'`devcontainers/template-starter`' is known as the template collection namespace.
+- Rebuilding the same Dev Container can reuse its volume.
+- Different projects normally use separate volumes.
+- Removing the volume deletes the persisted configuration.
+- Authentication may need to be renewed if a session expires.
 
-### Marking Template Public
+Never commit credentials, API keys, or authentication tokens to this repository.
 
-For your Template to be used, it currently needs to be available publicly. By default, OCI Artifacts in GHCR are marked as `private`. 
+### WSLg support
 
-To make them public, navigate to the Template's "package settings" page in GHCR, and set the visibility to 'public`. 
+The Python template may include WSLg mounts and environment variables for graphical Linux applications.
 
-```
-https://github.com/users/<owner>/packages/container/<repo>%2F<templateName>/settings
-```
+These settings are specific to WSL2 and should not automatically be copied into templates intended for macOS, native Linux, or cloud environments.
 
-### Adding Templates to the Index
+## Using a Template
 
-Next you will need to add your Templates collection to our [public index](https://containers.dev/templates) so that other community members can find them. Just follow these steps once per collection you create:
+Requirements:
 
-* Go to [github.com/devcontainers/devcontainers.github.io](https://github.com/devcontainers/devcontainers.github.io)
-     * This is the GitHub repo backing the [containers.dev](https://containers.dev/) spec site
-* Open a PR to modify the [collection-index.yml](https://github.com/devcontainers/devcontainers.github.io/blob/gh-pages/_data/collection-index.yml) file
+- Docker or another supported Dev Container runtime.
+- Visual Studio Code.
+- The Dev Containers extension.
+- The Dev Container CLI.
 
-This index is from where [supporting tools](https://containers.dev/supporting) like [VS Code Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and [GitHub Codespaces](https://github.com/templates/codespaces) surface Templates for their Dev Container Creation Configuration UI.
+Create a project directory:
 
-### Testing Templates
-
-This repo contains a GitHub Action [workflow](.github/workflows/test-pr.yaml) for testing the Templates. Similar to the [`devcontainers/templates`](https://github.com/devcontainers/templates) repo, this repository has a `test` folder.  Each Template has its own sub-folder, containing at least a `test.sh`.
-
-For running the tests locally, you would need to execute the following commands -
-
-```
-    ./.github/actions/smoke-test/build.sh ${TEMPLATE-ID} 
-    ./.github/actions/smoke-test/test.sh ${TEMPLATE-ID} 
+```bash
+mkdir my-python-project
+cd my-python-project
 ```
 
-### Updating Documentation
+Apply the published Python template:
 
-This repo contains a GitHub Action [workflow](.github/workflows/release.yaml) that will automatically generate documentation (ie. `README.md`) for each Template. This file will be auto-generated from the `devcontainer-template.json` and `NOTES.md`.
+```bash
+devcontainer templates apply \
+  --template-id ghcr.io/TON_USER/devcontainer-templates/python:latest \
+  --workspace-folder .
+```
+
+Replace `TON_USER` with the publishing GitHub account or organization.
+
+Open the project in VS Code:
+
+```bash
+code .
+```
+
+Then run **Dev Containers: Rebuild and Reopen in Container**.
+
+The resulting environment should install the template's configured Features and VS Code extensions.
+
+## Project Dependencies
+
+The template may configure project-specific commands, such as:
+
+```bash
+pip install -e '.[dev]'
+```
+
+This command assumes the project provides a suitable Python package configuration.
+
+Project dependency installation should remain separate from shared Features so that generic tooling does not depend on a particular application's structure.
+
+## Testing
+
+Run the repository's automated template tests using the Dev Container CLI and the workflows provided by the starter.
+
+Before publishing changes, verify:
+
+- Template metadata is valid.
+- The Dev Container configuration is valid JSON.
+- All referenced Features are accessible.
+- The container builds successfully.
+- Claude Code is available inside the container.
+- The Claude configuration directory is writable.
+- Configuration persists after rebuilding the same container.
+
+## Publishing
+
+Templates are published as OCI artifacts through GitHub Container Registry (GHCR).
+
+The expected reference format is:
+
+```text
+ghcr.io/TON_USER/devcontainer-templates/python:VERSION
+```
+
+For example:
+
+```text
+ghcr.io/TON_USER/devcontainer-templates/python:latest
+```
+
+Use the repository's GitHub Actions release workflow to publish templates and generate documentation.
+
+Keep each template's version in `src/<template>/devcontainer-template.json` up to date when releasing changes.
+
+## Security Principles
+
+- Never commit secrets or personal credentials.
+- Avoid embedding credentials in Docker images.
+- Persist only the configuration required by each tool.
+- Review host mounts before exposing host resources to containers.
+- Keep Docker daemon access and sensitive host credentials protected.
+- Test container hardening settings against the required development tools.
+
+## Roadmap
+
+- [x] Establish the Python template.
+- [x] Create a shared AI tools Feature.
+- [ ] Validate Claude configuration persistence.
+- [ ] Add a Node.js template.
+- [ ] Add Go and Rust templates.
+- [ ] Expand shared security and developer tooling.
+- [ ] Standardize agent instructions and project templates.
+
+## License
+
+See [LICENSE](LICENSE).
