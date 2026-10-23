@@ -33,6 +33,12 @@ else
   echo "SKIP: Ruff (not installed)"
 fi
 
+if command -v mypy >/dev/null 2>&1 && { [[ -f mypy.ini ]] || grep -qs '^\[tool\.mypy\]' pyproject.toml; }; then
+  run_check "mypy" mypy .
+else
+  echo "SKIP: mypy (not installed or not configured)"
+fi
+
 if command -v gitleaks >/dev/null 2>&1; then
   run_check "Gitleaks working-tree scan" gitleaks detect --no-git --source .
 else

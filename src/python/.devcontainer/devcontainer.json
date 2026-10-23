@@ -1,7 +1,10 @@
 {
-    "name": "Python standard",
+    "name": "Python 3",
     "build": {
-        "dockerfile": "Dockerfile"
+        "dockerfile": "Dockerfile",
+        "args": {
+            "VARIANT": "${templateOption:imageVariant}"
+        }
     },
     "remoteUser": "vscode",
     "features": {
@@ -11,7 +14,8 @@
         "ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1": {}
     },
     "runArgs": [
-        "--cap-drop=ALL"
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges"
     ],
     "customizations": {
         "vscode": {
@@ -22,17 +26,5 @@
             ]
         }
     },
-    "postCreateCommand": "pip install -e '.[dev]' && npm install -g opencode-ai",
-    "mounts": [
-        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
-        "source=/mnt/wslg,target=/mnt/wslg,type=bind",
-        "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
-    ],
-    "containerEnv": {
-        "DISPLAY": ":0",
-        "WAYLAND_DISPLAY": "wayland-0",
-        "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
-        "PULSE_SERVER": "/mnt/wslg/PulseServer",
-        "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
-    }
+    "postCreateCommand": "if [ -f pyproject.toml ]; then pip install -e '.[dev]'; fi"
 }

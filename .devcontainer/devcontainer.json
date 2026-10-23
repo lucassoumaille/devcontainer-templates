@@ -1,24 +1,22 @@
 // More info: https://containers.dev/implementors/json_reference/
 {
-	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-18-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+	"remoteUser": "node",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": false
+		},
 		"ghcr.io/devcontainers/features/git:1": {},
-		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+		"ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1": {
+			"installOpenCode": false
+		}
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"mads-hartmann.bash-ide-vscode",
-				"dbaeumer.vscode-eslint",
+				"mads-hartmann.bash-ide-vscode"
 			]
 		}
 	},
-	"mounts": [
-        "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
-    ],
-	"postCreateCommand": "npm install -g @devcontainers/cli",
-	"containerEnv": {
-        "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
-    }
+	"postCreateCommand": "npm install -g @devcontainers/cli"
 }

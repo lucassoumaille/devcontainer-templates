@@ -1,15 +1,15 @@
 {
     "id": "python",
-    "version": "6.0.2",
+    "version": "7.0.0",
     "name": "Python 3",
-    "description": "Develop Python 3 applications.",
-    "documentationURL": "https://github.com/devcontainers/templates/tree/main/src/python",
+    "description": "Python 3 with Ruff, pytest, mypy, Claude Code (shared login) and OpenCode.",
+    "documentationURL": "https://github.com/lucassoumaille/devcontainer-templates/tree/main/src/python",
     "publisher": "lucassoumaille",
-    "licenseURL": "https://github.com/devcontainers/templates/blob/main/LICENSE",
+    "licenseURL": "https://github.com/lucassoumaille/devcontainer-templates/blob/main/LICENSE",
     "options": {
         "imageVariant": {
             "type": "string",
-            "description": "Python version (use -trixie, or -bookworm variants on local arm64/Apple Silicon):",
+            "description": "Python version and Debian release:",
             "proposals": [
                 "3-trixie",
                 "3.14-trixie",
@@ -24,11 +24,8 @@
                 "3.11-bookworm",
                 "3.10-bookworm"
             ],
-            "default": "3.14-trixie" 
+            "default": "3.14-trixie"
         }
     },
-    "platforms": ["Python"],
-    "optionalPaths": [
-        ".github/*"
-    ]
+    "platforms": ["Python"]
 }

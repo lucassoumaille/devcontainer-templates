@@ -4,12 +4,13 @@ This template provides concise instructions and optional Claude Code rules for P
 
 ## Included
 - `AGENTS.md`: shared instructions for compatible coding agents.
-- `CLAUDE.md`: Claude Code entry point.
+- `CLAUDE.md`: Claude Code entry point, imports `AGENTS.md`.
 - `.claude/rules/python.md`: Python conventions.
 - `.claude/rules/api-contracts.md`: router, OpenAPI, and API documentation guidance.
-- `.claude/rules/testing.md` and `security.md`: testing and security expectations.
-- `.claude/skills/`: opt-in code review and security audit workflows.
-- `scripts/agent-check.sh`: runs supported checks already available in the project.
+- `.claude/rules/testing.md`: testing expectations.
+- `scripts/agent-check.sh`: runs supported checks already available in the project (pytest, Ruff, mypy, Gitleaks).
+
+Language-agnostic configuration (permission deny rules, security instructions, `quick-review` and `security-audit` skills) comes from the `ai-tools` feature, not from this template.
 
 ## OpenAPI conventions
 Prefer the framework's generated OpenAPI document when available. Swagger UI displays that contract; it is not a separate source of truth.
