@@ -1,0 +1,21 @@
+{
+    "name": "Node.js & TypeScript",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:5-${templateOption:imageVariant}",
+    "remoteUser": "node",
+    "features": {
+        "ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1": {}
+    },
+    "runArgs": [
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+    "postCreateCommand": "if [ -f package-lock.json ]; then npm ci; fi"
+}

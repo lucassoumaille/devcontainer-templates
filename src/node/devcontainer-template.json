@@ -1,0 +1,25 @@
+{
+    "id": "node",
+    "version": "1.0.0",
+    "name": "Node.js & TypeScript",
+    "description": "Node.js and TypeScript with ESLint, Prettier, Claude Code (shared login) and OpenCode.",
+    "documentationURL": "https://github.com/lucassoumaille/devcontainer-templates/tree/main/src/node",
+    "publisher": "lucassoumaille",
+    "licenseURL": "https://github.com/lucassoumaille/devcontainer-templates/blob/main/LICENSE",
+    "options": {
+        "imageVariant": {
+            "type": "string",
+            "description": "Node.js version and Debian release:",
+            "proposals": [
+                "24-trixie",
+                "22-trixie",
+                "26-trixie",
+                "24-bookworm",
+                "22-bookworm",
+                "26-bookworm"
+            ],
+            "default": "24-trixie"
+        }
+    },
+    "platforms": ["Node.js", "TypeScript", "JavaScript"]
+}

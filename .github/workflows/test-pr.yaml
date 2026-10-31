@@ -15,6 +15,9 @@ jobs:
             python:
               - 'src/python/**'
               - 'test/python/**'
+            node:
+              - 'src/node/**'
+              - 'test/node/**'
 
   test:
     needs: [detect-changes]

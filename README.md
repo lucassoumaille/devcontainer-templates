@@ -7,8 +7,9 @@
 | Template | Description |
 |---|---|
 | [`python`](src/python) | Python 3 with Ruff, pytest, mypy, Claude Code and OpenCode |
+| [`node`](src/node) | Node.js and TypeScript with ESLint, Prettier, Claude Code and OpenCode |
 
-Planned: Node.js, Go, Rust.
+Planned: Go, Rust.
 
 ## Architecture
 
