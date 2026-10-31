@@ -16,9 +16,9 @@
       "integrity": "sha256:fd75977de13a9979000e0e78baf949adb0ca71d2398995fa22e0a36d7e7e7fe2"
     },
     "ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1": {
-      "version": "1.0.0",
-      "resolved": "ghcr.io/lucassoumaille/devcontainer-features/ai-tools@sha256:f34991f8e66eb20a89609ac132d6a4767c65e11d0664eda657996b90db9b3595",
-      "integrity": "sha256:f34991f8e66eb20a89609ac132d6a4767c65e11d0664eda657996b90db9b3595",
+      "version": "1.1.0",
+      "resolved": "ghcr.io/lucassoumaille/devcontainer-features/ai-tools@sha256:badaaf922454b59e19fa2e17f68696f801456a4dadf0d81b69c4c9a60d8e4232",
+      "integrity": "sha256:badaaf922454b59e19fa2e17f68696f801456a4dadf0d81b69c4c9a60d8e4232",
       "dependsOn": [
         "ghcr.io/anthropics/devcontainer-features/claude-code:1"
       ]
