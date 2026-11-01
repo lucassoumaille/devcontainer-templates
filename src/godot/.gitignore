@@ -1,0 +1,8 @@
+# Godot cache, regenerated on import
+.godot/
+
+# Export output
+build/
+
+# Translations compiled from CSV
+*.translation

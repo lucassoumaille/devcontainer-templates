@@ -1,0 +1,22 @@
+{
+    "id": "godot",
+    "version": "1.0.0",
+    "name": "Godot 4",
+    "description": "Godot 4 (GDScript) with export templates for Windows and Linux, gdtoolkit, editor display through WSLg, Claude Code (shared login) and OpenCode.",
+    "documentationURL": "https://github.com/lucassoumaille/devcontainer-templates/tree/main/src/godot",
+    "publisher": "lucassoumaille",
+    "licenseURL": "https://github.com/lucassoumaille/devcontainer-templates/blob/main/LICENSE",
+    "options": {
+        "godotVersion": {
+            "type": "string",
+            "description": "Godot version (must match the editor used on other machines):",
+            "proposals": [
+                "4.7.2",
+                "4.6.3",
+                "4.5.2"
+            ],
+            "default": "4.7.2"
+        }
+    },
+    "platforms": ["Godot", "GDScript"]
+}
