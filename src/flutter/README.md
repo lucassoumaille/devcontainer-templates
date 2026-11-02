@@ -1,7 +1,7 @@
 
 # Flutter (Android, iOS) (flutter)
 
-Flutter with Android SDK, emulator (KVM + WSLg), Linux desktop and web targets, a starter app, Claude Code (shared login) and OpenCode.
+Flutter with Android SDK (devices over adb, no emulator or KVM), Linux desktop (WSLg) and web targets, a starter app, Claude Code (shared login) and OpenCode.
 
 ## Options
 

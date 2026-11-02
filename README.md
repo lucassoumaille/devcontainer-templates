@@ -9,7 +9,7 @@
 | [`python`](src/python) | Python 3 with Ruff, pytest, mypy, Claude Code and OpenCode |
 | [`node`](src/node) | Node.js and TypeScript with ESLint, Prettier, Claude Code and OpenCode |
 | [`supabase`](src/supabase) | Local Supabase stack through Docker-in-Docker, versioned migrations, pgTAP tests, pre-push hook, CI/deploy workflows, Claude Code and OpenCode |
-| [`flutter`](src/flutter) | Flutter with Android SDK and emulator, Linux/web targets, iOS CI build, starter app, Claude Code and OpenCode |
+| [`flutter`](src/flutter) | Flutter with Android SDK (phone or Windows emulator over adb), Linux/web targets, iOS CI build, starter app, Claude Code and OpenCode |
 | [`godot`](src/godot) | Godot 4 (GDScript) with Windows/Linux export templates, gdtoolkit, editor through WSLg, Claude Code and OpenCode |
 
 Planned: Go, Rust.

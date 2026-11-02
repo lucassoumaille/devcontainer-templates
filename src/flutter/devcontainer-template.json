@@ -1,8 +1,8 @@
 {
     "id": "flutter",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "name": "Flutter (Android, iOS)",
-    "description": "Flutter with Android SDK, emulator (KVM + WSLg), Linux desktop and web targets, a starter app, Claude Code (shared login) and OpenCode.",
+    "description": "Flutter with Android SDK (devices over adb, no emulator or KVM), Linux desktop (WSLg) and web targets, a starter app, Claude Code (shared login) and OpenCode.",
     "documentationURL": "https://github.com/lucassoumaille/devcontainer-templates/tree/main/src/flutter",
     "publisher": "lucassoumaille",
     "licenseURL": "https://github.com/lucassoumaille/devcontainer-templates/blob/main/LICENSE",

@@ -1,19 +1,8 @@
 ## Requirements (Windows + WSL2)
 
-The container uses WSLg for windows (emulator, Linux desktop app) and KVM for the Android emulator. `devcontainer.json` passes `/dev/kvm` and `/dev/dxg` and mounts `/tmp/.X11-unix`, `/mnt/wslg`, `/usr/lib/wsl`: the container does not start where they do not exist (macOS, CI, WSL without nested virtualization).
+The container uses WSLg for the Linux desktop app window. `devcontainer.json` passes `/dev/dxg` and mounts `/tmp/.X11-unix`, `/mnt/wslg`, `/usr/lib/wsl`: the container does not start where they do not exist (macOS, CI).
 
-Check in a WSL terminal, outside the container:
-
-```bash
-ls -l /dev/kvm   # missing: add "nestedVirtualization=true" under [wsl2] in %UserProfile%\.wslconfig, then wsl --shutdown
-```
-
-If `/dev/kvm` is not world-writable, the container user cannot open it:
-
-```bash
-sudo chmod 666 /dev/kvm
-echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm.rules   # permanent
-```
+The container does not need KVM: there is no Android emulator inside it. The app runs on an Android phone or on an emulator installed on Windows, both reached over adb (see below).
 
 ## First start
 
@@ -23,14 +12,14 @@ echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-k
 
 | Target | How | Use for |
 |---|---|---|
-| Android emulator | `./scripts/android-emulator.sh` in a terminal, then `flutter run` | full Android behavior, plugins |
 | Android phone (Wi-Fi) | see below, then `flutter run -d <id>` | camera, biometrics, notifications, performance |
+| Android emulator on Windows | see below, then `flutter run -d <id>` | full Android behavior, plugins |
 | Linux desktop | `flutter run -d linux` | fast UI iteration (no Android plugins) |
 | Web | `flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080`, open http://localhost:8080 in Windows | UI preview in a browser |
 
 VS Code: **Run and Debug** has `dev`, `dev (web-server :8080)` and `prod (profile)` configurations that pass `config/<env>.json`.
 
-The emulator renders on the CPU by default (`swiftshader_indirect`). Try `EMULATOR_GPU=host ./scripts/android-emulator.sh` for the WSL GPU. AVDs, the debug keystore and adb keys are kept in the `flutter-android-home` volume, shared by every Flutter container.
+The debug keystore and adb keys are kept in the `flutter-android-home` volume, shared by every Flutter container.
 
 ### Physical Android phone
 
@@ -42,6 +31,25 @@ USB devices are not visible in the container. Use wireless debugging (Android 11
 
 USB alternative: share the device with WSL using `usbipd-win` (`usbipd attach --wsl --busid <id>`), then add `"--device=/dev/bus/usb"` to `runArgs`.
 
+### Android emulator on Windows
+
+Install Android Studio on Windows (enable the **Windows Hypervisor Platform** Windows feature), create an AVD in Device Manager and start it. The emulator only listens on `127.0.0.1` (adb port `5555` for the first one), so relay it once in an administrator PowerShell:
+
+```powershell
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=15555 connectaddress=127.0.0.1 connectport=5555
+```
+
+Allow inbound TCP `15555` in the Windows firewall from the WSL network only: adb on this port has no authentication. Then, in the container:
+
+```bash
+adb connect host.docker.internal:15555   # Docker Desktop; with Docker Engine in WSL, use the Windows host IP
+flutter devices
+```
+
+The adb server runs in the container, so `flutter run`, hot reload and the debugger work. Do not point the container at the Windows adb server (`ADB_SERVER_SOCKET`): ports Flutter forwards would open on Windows and `flutter run` could not attach. Remove the relay with `netsh interface portproxy delete v4tov4 listenaddress=0.0.0.0 listenport=15555`.
+
+Without the relay: `flutter build apk --debug` in the container, then `adb install build\app\outputs\flutter-apk\app-debug.apk` on Windows (no hot reload or debugger).
+
 ### iPhone
 
 iOS builds need macOS and Xcode; nothing iOS runs in this container. The generated `.github/workflows/ci.yaml` compiles the iOS app without signing on a GitHub macOS runner. To run on an iPhone or publish to TestFlight you need a Mac (or a hosted macOS CI such as Codemagic) and an Apple Developer account.
@@ -49,8 +57,8 @@ iOS builds need macOS and Xcode; nothing iOS runs in this container. The generat
 ## Tests
 
 ```bash
-./scripts/agent-check.sh                                 # format, analyze, unit and widget tests
-INTEGRATION_DEVICE=emulator-5554 ./scripts/agent-check.sh  # plus integration tests on a device
+./scripts/agent-check.sh                          # format, analyze, unit and widget tests
+INTEGRATION_DEVICE=linux ./scripts/agent-check.sh   # plus integration tests (or an Android id from `flutter devices`)
 ```
 
 ## Release builds

@@ -14,7 +14,6 @@ This template provides concise instructions and optional Claude Code rules for F
 - `.claude/rules/payments.md`: store billing vs payment providers, server-side validation.
 - `scripts/agent-check.sh`: runs supported checks (dart format, flutter analyze, flutter test, integration tests on `INTEGRATION_DEVICE`, tracked signing keys, Gitleaks).
 - `scripts/bootstrap.sh`: generates platform folders on first start.
-- `scripts/android-emulator.sh`: starts the Android emulator.
 
 Language-agnostic configuration (permission deny rules, security instructions, `quick-review` and `security-audit` skills) comes from the `ai-tools` feature, not from this template.
 

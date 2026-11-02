@@ -42,13 +42,9 @@ popd
 DEVCONTAINER_JSON="${SRC_DIR}/.devcontainer/devcontainer.json"
 if grep -q '/mnt/wslg' "${DEVCONTAINER_JSON}"; then
     echo "(!) Removing WSL-only mounts and devices for '${TEMPLATE_ID}'"
-    REMOVED_DEVICES='["--device=/dev/dxg"]'
-    if [ ! -e /dev/kvm ]; then
-        REMOVED_DEVICES='["--device=/dev/dxg", "--device=/dev/kvm"]'
-    fi
-    jq --argjson devices "${REMOVED_DEVICES}" '
+    jq '
         .mounts |= map(select(test("source=(/tmp/\\.X11-unix|/mnt/wslg|/usr/lib/wsl),") | not))
-        | .runArgs |= map(select(. as $arg | $devices | index($arg) | not))
+        | .runArgs |= map(select(. != "--device=/dev/dxg"))
     ' "${DEVCONTAINER_JSON}" > "${DEVCONTAINER_JSON}.ci"
     mv "${DEVCONTAINER_JSON}.ci" "${DEVCONTAINER_JSON}"
 fi

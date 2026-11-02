@@ -8,8 +8,6 @@ check "dart" dart --version
 check "java" java -version
 check "adb" adb version
 check "sdkmanager" sdkmanager --version
-check "emulator" emulator -version
-check "Android system image installed" bash -c 'ls -d "${ANDROID_HOME}"/system-images/android-*/google_apis/x86_64'
 check "flutter doctor: Android toolchain" bash -c 'flutter doctor -v | grep -q "\[✓\] Android toolchain"'
 check "platform folders generated" test -f ../android/settings.gradle.kts
 check "release INTERNET permission" grep -q 'android.permission.INTERNET' ../android/app/src/main/AndroidManifest.xml

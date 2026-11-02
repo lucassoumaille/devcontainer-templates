@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 # Run checks that are available/configured in this project.
 # This script intentionally does not install tools or modify dependencies.
-# Set INTEGRATION_DEVICE (e.g. emulator-5554, linux) to also run integration tests.
+# Set INTEGRATION_DEVICE (e.g. linux, or an id from `flutter devices`) to also run integration tests.
 
 failures=0
 ran=0
