@@ -1,0 +1,43 @@
+name: Database deploy
+
+# Staging: every merge on main that adds migrations.
+# Production: manual run on main only, through the "production" environment (add required
+# reviewers to it in Settings > Environments so each deploy needs an approval).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [staging, production]
+        default: staging
+
+env:
+  SUPABASE_CLI_VERSION: "${templateOption:supabaseCliVersion}"
+
+concurrency:
+  group: db-deploy-${{ inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'staging' }}
+    env:
+      # Environment secrets, defined separately in the staging and production environments.
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - run: supabase link --project-ref "${SUPABASE_PROJECT_ID}"
+      - run: supabase db push --linked --dry-run
+      - run: supabase db push --linked

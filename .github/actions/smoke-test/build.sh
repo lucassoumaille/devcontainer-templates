@@ -37,6 +37,22 @@ fi
 
 popd
 
+# WSL-only host resources (WSLg display, WSL GPU) do not exist on CI runners: docker refuses
+# to start a container whose bind mount sources or devices are missing.
+DEVCONTAINER_JSON="${SRC_DIR}/.devcontainer/devcontainer.json"
+if grep -q '/mnt/wslg' "${DEVCONTAINER_JSON}"; then
+    echo "(!) Removing WSL-only mounts and devices for '${TEMPLATE_ID}'"
+    REMOVED_DEVICES='["--device=/dev/dxg"]'
+    if [ ! -e /dev/kvm ]; then
+        REMOVED_DEVICES='["--device=/dev/dxg", "--device=/dev/kvm"]'
+    fi
+    jq --argjson devices "${REMOVED_DEVICES}" '
+        .mounts |= map(select(test("source=(/tmp/\\.X11-unix|/mnt/wslg|/usr/lib/wsl),") | not))
+        | .runArgs |= map(select(. as $arg | $devices | index($arg) | not))
+    ' "${DEVCONTAINER_JSON}" > "${DEVCONTAINER_JSON}.ci"
+    mv "${DEVCONTAINER_JSON}.ci" "${DEVCONTAINER_JSON}"
+fi
+
 TEST_DIR="test/${TEMPLATE_ID}"
 if [ -d "${TEST_DIR}" ] ; then
     echo "(*) Copying test folder"

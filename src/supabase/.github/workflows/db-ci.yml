@@ -1,0 +1,31 @@
+name: Database CI
+
+# Runs the same `make check` as the dev container and the pre-push hook.
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "Makefile"
+      - "scripts/**"
+      - ".github/workflows/db-*.yml"
+
+env:
+  SUPABASE_CLI_VERSION: "${templateOption:supabaseCliVersion}"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # check-migrations.sh compares with the base branch
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - run: make check
+        env:
+          MIGRATIONS_BASE_REF: origin/${{ github.base_ref }}
+          # Services the database checks do not use; keeps the start under a minute or two.
+          EXCLUDE: studio,imgproxy,mailpit,logflare,vector,supavisor,edge-runtime
+      - if: always()
+        run: supabase stop --no-backup

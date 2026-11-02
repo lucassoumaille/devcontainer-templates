@@ -1,0 +1,68 @@
+{
+    "name": "Supabase",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "SUPABASE_CLI_VERSION": "${templateOption:supabaseCliVersion}",
+            "INSTALL_DART": "${templateOption:installDart}"
+        }
+    },
+    "remoteUser": "vscode",
+    // `supabase start` runs about ten containers: below 4 cores / 8 GB it is slow or runs out of memory.
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "8gb",
+        "storage": "32gb"
+    },
+    "features": {
+        // Privileged: the inner Docker daemon needs it. Compose and buildx are not used by the Supabase CLI.
+        "ghcr.io/devcontainers/features/docker-in-docker:4.1.3": {
+            "version": "29.9.2",
+            "dockerDashComposeVersion": "none",
+            "installDockerBuildx": false
+        },
+        "ghcr.io/devcontainers/features/node:2.1.1": {
+            "version": "24"
+        },
+        "ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1.1.0": {}
+    },
+    "forwardPorts": [54321, 54322, 54323, 54324],
+    "portsAttributes": {
+        "54321": {
+            "label": "Supabase API (REST, Auth, Storage, Realtime)",
+            "onAutoForward": "silent"
+        },
+        "54322": {
+            "label": "Postgres",
+            "onAutoForward": "silent"
+        },
+        "54323": {
+            "label": "Supabase Studio",
+            "onAutoForward": "notify"
+        },
+        "54324": {
+            "label": "Mailpit (auth e-mails)",
+            "onAutoForward": "silent"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-ossdata.vscode-pgsql",
+                "redhat.vscode-yaml",
+                "github.vscode-github-actions",
+                "denoland.vscode-deno"
+                // Flutter app in the same repository: add "Dart-Code.dart-code" and "Dart-Code.flutter".
+            ],
+            "settings": {
+                "deno.enablePaths": ["supabase/functions"],
+                "deno.path": "/usr/local/bin/deno"
+            }
+        },
+        "codespaces": {
+            "openFiles": ["README.md"]
+        }
+    },
+    "postCreateCommand": "./scripts/bootstrap.sh",
+    "postStartCommand": "./scripts/help.sh"
+}

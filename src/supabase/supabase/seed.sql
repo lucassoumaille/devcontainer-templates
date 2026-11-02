@@ -1,0 +1,2 @@
+-- Development data loaded by `make reset` after the migrations. Never applied to remote projects.
+-- Use fixed UUIDs so tests and the app can refer to the same users and rows.

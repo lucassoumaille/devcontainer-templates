@@ -18,6 +18,15 @@ jobs:
             node:
               - 'src/node/**'
               - 'test/node/**'
+            godot:
+              - 'src/godot/**'
+              - 'test/godot/**'
+            flutter:
+              - 'src/flutter/**'
+              - 'test/flutter/**'
+            supabase:
+              - 'src/supabase/**'
+              - 'test/supabase/**'
 
   test:
     needs: [detect-changes]

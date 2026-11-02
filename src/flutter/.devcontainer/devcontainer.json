@@ -1,0 +1,57 @@
+{
+    "name": "Flutter",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "FLUTTER_VERSION": "${templateOption:flutterVersion}"
+        }
+    },
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/node:2": {
+            "version": "22"
+        },
+        "ghcr.io/lucassoumaille/devcontainer-features/ai-tools:1": {}
+    },
+    "runArgs": [
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--device=/dev/kvm",
+        "--device=/dev/dxg"
+    ],
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+        "source=/mnt/wslg,target=/mnt/wslg,type=bind",
+        "source=/usr/lib/wsl,target=/usr/lib/wsl,type=bind,readonly",
+        "source=flutter-gradle-cache,target=/home/vscode/.gradle,type=volume",
+        "source=flutter-pub-cache,target=/home/vscode/.pub-cache,type=volume",
+        "source=flutter-android-home,target=/home/vscode/.android,type=volume"
+    ],
+    "containerEnv": {
+        "DISPLAY": ":0",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+        "PULSE_SERVER": "unix:/mnt/wslg/PulseServer",
+        "LD_LIBRARY_PATH": "/usr/lib/wsl/lib"
+    },
+    "forwardPorts": [8080],
+    "portsAttributes": {
+        "8080": {
+            "label": "Flutter web-server"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Dart-Code.dart-code",
+                "Dart-Code.flutter"
+            ],
+            "settings": {
+                "dart.flutterSdkPath": "/opt/flutter",
+                "dart.debugExternalPackageLibraries": false,
+                "dart.debugSdkLibraries": false
+            }
+        }
+    },
+    "postCreateCommand": "./scripts/bootstrap.sh"
+}

@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "dev",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": ["--dart-define-from-file=config/dev.json"]
+        },
+        {
+            "name": "dev (web-server :8080)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "web-server",
+            "args": [
+                "--dart-define-from-file=config/dev.json",
+                "--web-hostname=0.0.0.0",
+                "--web-port=8080"
+            ]
+        },
+        {
+            "name": "prod (profile)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "flutterMode": "profile",
+            "args": ["--dart-define-from-file=config/prod.json"]
+        }
+    ]
+}

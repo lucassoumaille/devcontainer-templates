@@ -1,0 +1,23 @@
+{
+    "id": "supabase",
+    "version": "1.0.0",
+    "name": "Supabase",
+    "description": "Local Supabase stack (Postgres, Auth, Storage, Realtime) through Docker-in-Docker, versioned SQL migrations, pgTAP tests, pre-push hook, CI/deploy workflows, Claude Code (shared login) and OpenCode.",
+    "documentationURL": "https://github.com/lucassoumaille/devcontainer-templates/tree/main/src/supabase",
+    "publisher": "lucassoumaille",
+    "licenseURL": "https://github.com/lucassoumaille/devcontainer-templates/blob/main/LICENSE",
+    "options": {
+        "supabaseCliVersion": {
+            "type": "string",
+            "description": "Supabase CLI version (also used by the CI workflows):",
+            "proposals": ["2.122.0"],
+            "default": "2.122.0"
+        },
+        "installDart": {
+            "type": "boolean",
+            "description": "Install the Dart SDK (about 500 MB) to generate Dart types for a Flutter app (make types-dart):",
+            "default": false
+        }
+    },
+    "platforms": ["Supabase", "PostgreSQL", "SQL"]
+}
